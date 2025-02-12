@@ -3,28 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Creative Background Generator</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        height: 100vh;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-        background-color: #c5c2c2;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #ffffff, #ffffff);
+            transition: background 0.5s ease-in-out;
+            overflow: hidden;
         }
         
-        label{
-            background-color: #ffffff83;
-            border: solid #000;
-            width: 90px;
-            text-align: center;
-            border-radius: 30px;
-            text-align: center;
-            padding: 15px;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
         
-        input{
+        .color {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 15px;
+            padding: 1rem;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        label:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+        
+        input[type="color"] {
             height: 60px;
             width: 60px;
             padding: 0;
@@ -32,30 +82,182 @@
             background-color: transparent;
             outline: none;
             border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        input[type="color"]:hover {
+            transform: rotate(15deg) scale(1.1);
         }
 
         .first::-webkit-color-swatch,
-        .second::-webkit-color-swatch{
+        .second::-webkit-color-swatch {
             border-radius: 50%;
-            border: 4px solid #888;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
+        button {
+            margin-top: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #007BFF, #00C6FF);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            transition: top 0.5s ease;
+            z-index: 1000;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .direction-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .direction-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .direction-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .direction-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>Background Generator</h1>
+    <h1>Creative Background Generator</h1>
     <div class="content">
-
-    <div class="color">
-        <label>Color 1</label>
-        <input type="color" class="first" value="#ffffff">
-        <label>Color 2</label>
-        <input type="color" class="second"value="#ffffff">
-        
+        <div class="color">
+            <label>Color 1
+                <input type="color" class="first" value="#ff6b6b">
+            </label>
+            <label>Color 2
+                <input type="color" class="second" value="#4ecdc4">
+            </label>
+        </div>
+        <div class="direction-controls">
+            <button class="direction-btn active" data-direction="to right">→</button>
+            <button class="direction-btn" data-direction="to bottom">↓</button>
+            <button class="direction-btn" data-direction="45deg">↘</button>
+            <button class="direction-btn" data-direction="-45deg">↗</button>
+        </div>
+        <button id="copyBtn">Copy Gradient</button>
     </div>
-    <!-- <button>
-        <h4>copy</h4>
-    </button> -->
-    <script src="script.js"></script>
+    <div class="notification" id="notification">Gradient copied to clipboard!</div>
+
+    <script>
+        const color1 = document.querySelector(".first");
+        const color2 = document.querySelector(".second");
+        const copyBtn = document.getElementById("copyBtn");
+        const notification = document.getElementById("notification");
+        const directionBtns = document.querySelectorAll(".direction-btn");
+        let currentDirection = "to right";
+
+        function setGradient() {
+            document.body.style.background = `linear-gradient(${currentDirection}, ${color1.value}, ${color2.value})`;
+        }
+
+        function showNotification() {
+            notification.style.top = "20px";
+            setTimeout(() => {
+                notification.style.top = "-100px";
+            }, 2000);
+        }
+
+        function copyGradient() {
+            const gradientCode = `background: linear-gradient(${currentDirection}, ${color1.value}, ${color2.value});`;
+            navigator.clipboard.writeText(gradientCode).then(() => {
+                showNotification();
+            }).catch(err => console.error("Error copying: ", err));
+        }
+
+        function updateDirection(e) {
+            const btn = e.target;
+            if (!btn.classList.contains('direction-btn')) return;
+
+            directionBtns.forEach(btn => btn.classList.remove('active'));
+            btn.classList.add('active');
+            currentDirection = btn.dataset.direction;
+            setGradient();
+        }
+
+        
+        function getRandomColor() {
+            return '#' + Math.floor(Math.random()*16777215).toString(16);
+        }
+
+        color1.value = getRandomColor();
+        color2.value = getRandomColor();
+
+        
+        color1.addEventListener("input", setGradient);
+        color2.addEventListener("input", setGradient);
+        copyBtn.addEventListener("click", copyGradient);
+        document.querySelector('.direction-controls').addEventListener('click', updateDirection);
+
+        
+        setGradient();
+    </script>
 </body>
 </html>
